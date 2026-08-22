@@ -4,18 +4,18 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: [self-hosted, Windows]
+    runs-on: windows-latest
     name: CI
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check CMake version
         run: cmake --version
 
       - name: Setup MSVC environment
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
         with:
-          arch: amd64
+          arch: x64
 
       - name: Generate CMake project
         run: cmake -D CMAKE_BUILD_TYPE=Release -S. -Bbuild -G Ninja
@@ -33,7 +33,7 @@ jobs:
         working-directory: build/
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: binary
           path: build/Terminus-dev-*.dll
