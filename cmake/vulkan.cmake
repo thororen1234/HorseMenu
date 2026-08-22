@@ -10,6 +10,8 @@ FetchContent_Declare(
 
 set(CMAKE_WARN_DEPRECATED 0 CACHE INTERNAL "Suppress deprecation shortly")
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE INTERNAL "Allow Vulkan-Headers' old cmake_minimum_required")
 FetchContent_MakeAvailable(Vulkan)
+unset(CMAKE_POLICY_VERSION_MINIMUM CACHE)
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 0 CACHE INTERNAL "Re-enable dev warnings")
 set(CMAKE_WARN_DEPRECATED 1 CACHE INTERNAL "Restore deprecation notices")
