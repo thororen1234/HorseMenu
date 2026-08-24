@@ -123,9 +123,8 @@ namespace YimMenu
 			return false;
 		}
 
-		if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		        __uuidof(ID3D12CommandAllocator),
-		        (void**)m_CommandAllocator.GetAddressOf());
+		if (const auto result = m_Device->CreateCommandAllocator(
+		        D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator), (void**)m_CommandAllocator.GetAddressOf());
 		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create primary Command Allocator with result: [" << result << "]";
@@ -138,7 +137,9 @@ namespace YimMenu
 		// create the rest of the allocators
 		for (size_t i = 1; i < m_SwapChainDesc.BufferCount; ++i)
 		{
-			if (const auto result = m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator),  (void**)&m_FrameContext[i].CommandAllocator); result < 0)
+			if (const auto result = m_Device->CreateCommandAllocator(
+			        D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator), (void**)&m_FrameContext[i].CommandAllocator);
+			    result < 0)
 			{
 				LOG(WARNING) << "Failed to create secondary Command Allocator with result: [" << result << "]";
 
@@ -167,9 +168,8 @@ namespace YimMenu
 		}
 
 		D3D12_DESCRIPTOR_HEAP_DESC DescriptorBackbufferDesc{D3D12_DESCRIPTOR_HEAP_TYPE_RTV, m_SwapChainDesc.BufferCount, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1};
-		if (const auto result = m_Device->CreateDescriptorHeap(&DescriptorBackbufferDesc,
-		        __uuidof(ID3D12DescriptorHeap),
-		        (void**)m_BackbufferDescriptorHeap.GetAddressOf());
+		if (const auto result = m_Device->CreateDescriptorHeap(
+		        &DescriptorBackbufferDesc, __uuidof(ID3D12DescriptorHeap), (void**)m_BackbufferDescriptorHeap.GetAddressOf());
 		    result < 0)
 		{
 			LOG(WARNING) << "Failed to create Backbuffer Descriptor Heap with result: [" << result << "]";
@@ -212,14 +212,14 @@ namespace YimMenu
 		};
 		ImGui_ImplDX12_Init(&init_info);
 
-		#if 0
+#if 0
 		ImGui_ImplDX12_Init(m_Device.Get(),
 		    m_SwapChainDesc.BufferCount,
 		    DXGI_FORMAT_R8G8B8A8_UNORM,
 		    m_DescriptorHeap.Get(),
 		    m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		    m_DescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-		#endif
+#endif
 
 		ImGui::StyleColorsDark();
 
@@ -235,8 +235,8 @@ namespace YimMenu
 
 		const std::vector<const char*> ValidationLayers = {"VK_LAYER_KHRONOS_validation"};
 
-		CreateInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		CreateInfo.enabledExtensionCount   = (uint32_t)InstanceExtensions.size();
+		CreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		CreateInfo.enabledExtensionCount = (uint32_t)InstanceExtensions.size();
 		CreateInfo.ppEnabledExtensionNames = InstanceExtensions.data();
 
 		//	CreateInfo.enabledLayerCount       = (uint32_t)ValidationLayers.size();
@@ -306,19 +306,19 @@ namespace YimMenu
 		IM_ASSERT(m_VkQueueFamily != (uint32_t)-1);
 
 		constexpr const char* DeviceExtension = "VK_KHR_swapchain";
-		constexpr const float QueuePriority   = 1.0f;
+		constexpr const float QueuePriority = 1.0f;
 
 		VkDeviceQueueCreateInfo DeviceQueueInfo = {};
-		DeviceQueueInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		DeviceQueueInfo.queueFamilyIndex        = m_VkQueueFamily;
-		DeviceQueueInfo.queueCount              = 1;
-		DeviceQueueInfo.pQueuePriorities        = &QueuePriority;
+		DeviceQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		DeviceQueueInfo.queueFamilyIndex = m_VkQueueFamily;
+		DeviceQueueInfo.queueCount = 1;
+		DeviceQueueInfo.pQueuePriorities = &QueuePriority;
 
-		VkDeviceCreateInfo DeviceCreateInfo      = {};
-		DeviceCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		DeviceCreateInfo.queueCreateInfoCount    = 1;
-		DeviceCreateInfo.pQueueCreateInfos       = &DeviceQueueInfo;
-		DeviceCreateInfo.enabledExtensionCount   = 1;
+		VkDeviceCreateInfo DeviceCreateInfo = {};
+		DeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		DeviceCreateInfo.queueCreateInfoCount = 1;
+		DeviceCreateInfo.pQueueCreateInfos = &DeviceQueueInfo;
+		DeviceCreateInfo.enabledExtensionCount = 1;
 		DeviceCreateInfo.ppEnabledExtensionNames = &DeviceExtension;
 
 		if (const VkResult result = vkCreateDevice(m_VkPhysicalDevice, &DeviceCreateInfo, m_VkAllocator, &m_VkFakeDevice); result != VK_SUCCESS)
@@ -351,7 +351,7 @@ namespace YimMenu
 		if (scale != 1.0f)
 			ImGui::GetStyle().ScaleAllSizes(scale);
 		ImGui::GetStyle().MouseCursorScale = 1.0f;
-		ImGui::GetIO().FontGlobalScale     = scale;
+		ImGui::GetIO().FontGlobalScale = scale;
 		DX12PostResize();
 	}
 
@@ -375,13 +375,13 @@ namespace YimMenu
 		{
 			m_VkFrames[i].Backbuffer = BackBuffers[i];
 
-			ImGui_ImplVulkanH_Frame* fd            = &m_VkFrames[i];
+			ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
 			ImGui_ImplVulkanH_FrameSemaphores* fsd = &m_VkFrameSemaphores[i];
 			{
 				VkCommandPoolCreateInfo info = {};
-				info.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-				info.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-				info.queueFamilyIndex        = m_VkQueueFamily;
+				info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+				info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+				info.queueFamilyIndex = m_VkQueueFamily;
 
 				if (const VkResult result = vkCreateCommandPool(device, &info, m_VkAllocator, &fd->CommandPool))
 				{
@@ -391,10 +391,10 @@ namespace YimMenu
 			}
 			{
 				VkCommandBufferAllocateInfo info = {};
-				info.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-				info.commandPool                 = fd->CommandPool;
-				info.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-				info.commandBufferCount          = 1;
+				info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+				info.commandPool = fd->CommandPool;
+				info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+				info.commandBufferCount = 1;
 
 				if (const VkResult result = vkAllocateCommandBuffers(device, &info, &fd->CommandBuffer))
 				{
@@ -404,8 +404,8 @@ namespace YimMenu
 			}
 			{
 				VkFenceCreateInfo info = {};
-				info.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-				info.flags             = VK_FENCE_CREATE_SIGNALED_BIT;
+				info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+				info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 				if (const VkResult result = vkCreateFence(device, &info, m_VkAllocator, &fd->Fence))
 				{
 					LOG(WARNING) << "vkCreateFence failed with result: [" << result << "]";
@@ -414,7 +414,7 @@ namespace YimMenu
 			}
 			{
 				VkSemaphoreCreateInfo info = {};
-				info.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+				info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 				if (const VkResult result = vkCreateSemaphore(device, &info, m_VkAllocator, &fsd->ImageAcquiredSemaphore))
 				{
 					LOG(WARNING) << "vkCreateSemaphore failed with result: [" << result << "]";
@@ -431,30 +431,30 @@ namespace YimMenu
 
 		{
 			VkAttachmentDescription attachment = {};
-			attachment.format                  = VK_FORMAT_B8G8R8A8_UNORM;
-			attachment.samples                 = VK_SAMPLE_COUNT_1_BIT;
-			attachment.loadOp                  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			attachment.storeOp                 = VK_ATTACHMENT_STORE_OP_STORE;
-			attachment.stencilLoadOp           = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			attachment.stencilStoreOp          = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			attachment.initialLayout           = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			attachment.finalLayout             = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+			attachment.format = VK_FORMAT_B8G8R8A8_UNORM;
+			attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			attachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 			VkAttachmentReference color_attachment = {};
-			color_attachment.attachment            = 0;
-			color_attachment.layout                = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			color_attachment.attachment = 0;
+			color_attachment.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 			VkSubpassDescription subpass = {};
-			subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+			subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 			subpass.colorAttachmentCount = 1;
-			subpass.pColorAttachments    = &color_attachment;
+			subpass.pColorAttachments = &color_attachment;
 
 			VkRenderPassCreateInfo info = {};
-			info.sType                  = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-			info.attachmentCount        = 1;
-			info.pAttachments           = &attachment;
-			info.subpassCount           = 1;
-			info.pSubpasses             = &subpass;
+			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+			info.attachmentCount = 1;
+			info.pAttachments = &attachment;
+			info.subpassCount = 1;
+			info.pSubpasses = &subpass;
 
 			if (const VkResult result = vkCreateRenderPass(device, &info, m_VkAllocator, &m_VkRenderPass))
 			{
@@ -464,20 +464,20 @@ namespace YimMenu
 		}
 		{
 			VkImageViewCreateInfo info = {};
-			info.sType                 = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			info.viewType              = VK_IMAGE_VIEW_TYPE_2D;
-			info.format                = VK_FORMAT_B8G8R8A8_UNORM;
+			info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			info.format = VK_FORMAT_B8G8R8A8_UNORM;
 
-			info.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-			info.subresourceRange.baseMipLevel   = 0;
-			info.subresourceRange.levelCount     = 1;
+			info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			info.subresourceRange.baseMipLevel = 0;
+			info.subresourceRange.levelCount = 1;
 			info.subresourceRange.baseArrayLayer = 0;
-			info.subresourceRange.layerCount     = 1;
+			info.subresourceRange.layerCount = 1;
 
 			for (uint32_t i = 0; i < uImageCount; ++i)
 			{
 				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
-				info.image                  = fd->Backbuffer;
+				info.image = fd->Backbuffer;
 
 				if (const VkResult result = vkCreateImageView(device, &info, m_VkAllocator, &fd->BackbufferView))
 				{
@@ -489,18 +489,18 @@ namespace YimMenu
 		{
 			VkImageView attachment[1];
 			VkFramebufferCreateInfo info = {};
-			info.sType                   = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			info.renderPass              = m_VkRenderPass;
-			info.attachmentCount         = 1;
-			info.pAttachments            = attachment;
-			info.layers                  = 1;
-			info.width                   = (m_VkImageExtent.width != 0) ? m_VkImageExtent.width : *Pointers.ScreenResX;
-      		info.height                  = (m_VkImageExtent.height != 0) ? m_VkImageExtent.height : *Pointers.ScreenResY;
+			info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			info.renderPass = m_VkRenderPass;
+			info.attachmentCount = 1;
+			info.pAttachments = attachment;
+			info.layers = 1;
+			info.width = (m_VkImageExtent.width != 0) ? m_VkImageExtent.width : *Pointers.ScreenResX;
+			info.height = (m_VkImageExtent.height != 0) ? m_VkImageExtent.height : *Pointers.ScreenResY;
 
 			for (uint32_t i = 0; i < uImageCount; ++i)
 			{
 				ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[i];
-				attachment[0]               = fd->BackbufferView;
+				attachment[0] = fd->BackbufferView;
 
 				if (const VkResult result = vkCreateFramebuffer(device, &info, m_VkAllocator, &fd->Framebuffer))
 				{
@@ -515,11 +515,11 @@ namespace YimMenu
 			constexpr VkDescriptorPoolSize pool_sizes[] = {{VK_DESCRIPTOR_TYPE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000}, {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000}, {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000}, {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}};
 
 			VkDescriptorPoolCreateInfo pool_info = {};
-			pool_info.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			pool_info.flags                      = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			pool_info.maxSets                    = 1000 * IM_ARRAYSIZE(pool_sizes);
-			pool_info.poolSizeCount              = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-			pool_info.pPoolSizes                 = pool_sizes;
+			pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+			pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
+			pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+			pool_info.pPoolSizes = pool_sizes;
 
 			if (const VkResult result = vkCreateDescriptorPool(device, &pool_info, m_VkAllocator, &m_VkDescriptorPool))
 			{
@@ -540,10 +540,8 @@ namespace YimMenu
 			}
 			if (GetInstance().m_VkFrames[i].CommandBuffer)
 			{
-				vkFreeCommandBuffers(GetInstance().m_VkDevice,
-				    GetInstance().m_VkFrames[i].CommandPool,
-				    1,
-				    &GetInstance().m_VkFrames[i].CommandBuffer);
+				vkFreeCommandBuffers(
+				    GetInstance().m_VkDevice, GetInstance().m_VkFrames[i].CommandPool, 1, &GetInstance().m_VkFrames[i].CommandBuffer);
 				GetInstance().m_VkFrames[i].CommandBuffer = VK_NULL_HANDLE;
 			}
 			if (GetInstance().m_VkFrames[i].CommandPool)
@@ -567,9 +565,8 @@ namespace YimMenu
 		{
 			if (GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore)
 			{
-				vkDestroySemaphore(GetInstance().m_VkDevice,
-				    GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore,
-				    GetInstance().m_VkAllocator);
+				vkDestroySemaphore(
+				    GetInstance().m_VkDevice, GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore, GetInstance().m_VkAllocator);
 				GetInstance().m_VkFrameSemaphores[i].ImageAcquiredSemaphore = VK_NULL_HANDLE;
 			}
 			if (GetInstance().m_VkFrameSemaphores[i].RenderCompleteSemaphore)
@@ -631,11 +628,14 @@ namespace YimMenu
 
 		if (!ImGui::GetCurrentContext())
 		{
+			LOG(WARNING) << "ImGui context missing during Vulkan present, recreating";
+
 			ImGui::CreateContext(&GetInstance().m_FontAtlas);
 			ImGui_ImplWin32_Init(*Pointers.Hwnd);
+			Menu::SetupStyle();
 		}
 
-		VkQueue GraphicQueue            = VK_NULL_HANDLE;
+		VkQueue GraphicQueue = VK_NULL_HANDLE;
 		const bool QueueSupportsGraphic = DoesQueueSupportGraphic(queue, &GraphicQueue);
 
 		static thread_local std::vector<VkSemaphore> s_presentWaitSemaphores;
@@ -649,7 +649,7 @@ namespace YimMenu
 				VkCreateRenderTarget(m_VkDevice, swapchain);
 			}
 
-			ImGui_ImplVulkanH_Frame* fd            = &m_VkFrames[pPresentInfo->pImageIndices[i]];
+			ImGui_ImplVulkanH_Frame* fd = &m_VkFrames[pPresentInfo->pImageIndices[i]];
 			ImGui_ImplVulkanH_FrameSemaphores* fsd = &m_VkFrameSemaphores[pPresentInfo->pImageIndices[i]];
 			{
 				if (const VkResult result = vkWaitForFences(m_VkDevice, 1, &fd->Fence, VK_TRUE, ~0ull); result != VK_SUCCESS)
@@ -672,7 +672,7 @@ namespace YimMenu
 				}
 
 				VkCommandBufferBeginInfo info = {};
-				info.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 				info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 				if (const VkResult result = vkBeginCommandBuffer(fd->CommandBuffer, &info); result != VK_SUCCESS)
@@ -683,12 +683,12 @@ namespace YimMenu
 			}
 			{
 				VkRenderPassBeginInfo info = {};
-				info.sType                 = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				info.renderPass            = m_VkRenderPass;
-				info.framebuffer           = fd->Framebuffer;
+				info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				info.renderPass = m_VkRenderPass;
+				info.framebuffer = fd->Framebuffer;
 				if (m_VkImageExtent.width == 0 || m_VkImageExtent.height == 0)
 				{
-					info.renderArea.extent.width  = *Pointers.ScreenResX;
+					info.renderArea.extent.width = *Pointers.ScreenResX;
 					info.renderArea.extent.height = *Pointers.ScreenResY;
 				}
 				else
@@ -702,19 +702,19 @@ namespace YimMenu
 			if (!ImGui::GetIO().BackendRendererUserData)
 			{
 				ImGui_ImplVulkan_InitInfo init_info = {};
-				init_info.Instance                  = m_VkInstance;
-				init_info.PhysicalDevice            = m_VkPhysicalDevice;
-				init_info.Device                    = m_VkDevice;
-				init_info.QueueFamily               = m_VkQueueFamily;
-				init_info.Queue                     = GraphicQueue;
-				init_info.PipelineCache             = m_VkPipelineCache;
-				init_info.DescriptorPool            = m_VkDescriptorPool;
-				init_info.Subpass                   = 0;
-				init_info.RenderPass				= m_VkRenderPass;
-				init_info.MinImageCount             = m_VkMinImageCount;
-				init_info.ImageCount                = m_VkMinImageCount;
-				init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
-				init_info.Allocator                 = m_VkAllocator;
+				init_info.Instance = m_VkInstance;
+				init_info.PhysicalDevice = m_VkPhysicalDevice;
+				init_info.Device = m_VkDevice;
+				init_info.QueueFamily = m_VkQueueFamily;
+				init_info.Queue = GraphicQueue;
+				init_info.PipelineCache = m_VkPipelineCache;
+				init_info.DescriptorPool = m_VkDescriptorPool;
+				init_info.Subpass = 0;
+				init_info.RenderPass = m_VkRenderPass;
+				init_info.MinImageCount = m_VkMinImageCount;
+				init_info.ImageCount = m_VkMinImageCount;
+				init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+				init_info.Allocator = m_VkAllocator;
 
 				ImGui_ImplVulkan_Init(&init_info);
 			}
@@ -739,12 +739,12 @@ namespace YimMenu
 				constexpr VkPipelineStageFlags stages_wait = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 				{
 					VkSubmitInfo info = {};
-					info.sType        = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+					info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
 					info.pWaitDstStageMask = &stages_wait;
 
 					info.signalSemaphoreCount = 1;
-					info.pSignalSemaphores    = &fsd->RenderCompleteSemaphore;
+					info.pSignalSemaphores = &fsd->RenderCompleteSemaphore;
 
 					if (const VkResult result = vkQueueSubmit(queue, 1, &info, VK_NULL_HANDLE); result != VK_SUCCESS)
 					{
@@ -753,17 +753,17 @@ namespace YimMenu
 					}
 				}
 				{
-					VkSubmitInfo info       = {};
-					info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+					VkSubmitInfo info = {};
+					info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 					info.commandBufferCount = 1;
-					info.pCommandBuffers    = &fd->CommandBuffer;
+					info.pCommandBuffers = &fd->CommandBuffer;
 
-					info.pWaitDstStageMask  = &stages_wait;
+					info.pWaitDstStageMask = &stages_wait;
 					info.waitSemaphoreCount = 1;
-					info.pWaitSemaphores    = &fsd->RenderCompleteSemaphore;
+					info.pWaitSemaphores = &fsd->RenderCompleteSemaphore;
 
 					info.signalSemaphoreCount = 1;
-					info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
+					info.pSignalSemaphores = &fsd->ImageAcquiredSemaphore;
 
 					if (const VkResult result = vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence); result != VK_SUCCESS)
 					{
@@ -776,17 +776,17 @@ namespace YimMenu
 			{
 				std::vector<VkPipelineStageFlags> stages_wait(waitSemaphoresCount, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 
-				VkSubmitInfo info       = {};
-				info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+				VkSubmitInfo info = {};
+				info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 				info.commandBufferCount = 1;
-				info.pCommandBuffers    = &fd->CommandBuffer;
+				info.pCommandBuffers = &fd->CommandBuffer;
 
-				info.pWaitDstStageMask  = stages_wait.data();
+				info.pWaitDstStageMask = stages_wait.data();
 				info.waitSemaphoreCount = waitSemaphoresCount;
-				info.pWaitSemaphores    = pPresentInfo->pWaitSemaphores;
+				info.pWaitSemaphores = pPresentInfo->pWaitSemaphores;
 
 				info.signalSemaphoreCount = 1;
-				info.pSignalSemaphores    = &fsd->ImageAcquiredSemaphore;
+				info.pSignalSemaphores = &fsd->ImageAcquiredSemaphore;
 
 				if (const VkResult result = vkQueueSubmit(GraphicQueue, 1, &info, fd->Fence); result != VK_SUCCESS)
 				{
@@ -797,9 +797,9 @@ namespace YimMenu
 
 			s_presentWaitSemaphores.push_back(fsd->ImageAcquiredSemaphore);
 			{
-				auto* mutablePresentInfo               = const_cast<VkPresentInfoKHR*>(pPresentInfo);
+				auto* mutablePresentInfo = const_cast<VkPresentInfoKHR*>(pPresentInfo);
 				mutablePresentInfo->waitSemaphoreCount = static_cast<uint32_t>(s_presentWaitSemaphores.size());
-				mutablePresentInfo->pWaitSemaphores    = s_presentWaitSemaphores.data();
+				mutablePresentInfo->pWaitSemaphores = s_presentWaitSemaphores.data();
 			}
 		}
 	}
@@ -851,14 +851,10 @@ namespace YimMenu
 	}
 
 	bool Renderer::AddRendererCallBackImpl(RendererCallBack&& callback, std::uint32_t priority)
-	{
-		return m_RendererCallBacks.insert({priority, callback}).second;
-	}
+	{ return m_RendererCallBacks.insert({priority, callback}).second; }
 
 	void Renderer::AddWindowProcedureCallbackImpl(WindowProcedureCallback&& callback)
-	{
-		return m_WindowProcedureCallbacks.push_back(callback);
-	}
+	{ return m_WindowProcedureCallbacks.push_back(callback); }
 
 	void Renderer::DX12OnPresentImpl()
 	{
@@ -901,11 +897,11 @@ namespace YimMenu
 
 	void Renderer::WaitForNextFrame()
 	{
-		UINT NextFrameIndex        = GetInstance().m_FrameIndex + 1;
+		UINT NextFrameIndex = GetInstance().m_FrameIndex + 1;
 		GetInstance().m_FrameIndex = NextFrameIndex;
 
 		HANDLE WaitableObjects[] = {GetInstance().m_SwapchainWaitableObject, nullptr};
-		DWORD NumWaitableObjets  = 1;
+		DWORD NumWaitableObjets = 1;
 
 		FrameContext FrameCtx = GetInstance().m_FrameContext[NextFrameIndex % GetInstance().m_SwapChainDesc.BufferCount];
 		UINT64 FenceValue = FrameCtx.FenceValue;
@@ -914,7 +910,7 @@ namespace YimMenu
 			FrameCtx.FenceValue = 0;
 			GetInstance().m_Fence->SetEventOnCompletion(FenceValue, GetInstance().m_FenceEvent);
 			WaitableObjects[1] = GetInstance().m_FenceEvent;
-			NumWaitableObjets  = 2;
+			NumWaitableObjets = 2;
 		}
 
 		WaitForMultipleObjects(NumWaitableObjets, WaitableObjects, TRUE, INFINITE);
@@ -967,9 +963,8 @@ namespace YimMenu
 		FrameContext& CurrentFrameContext{GetInstance().m_FrameContext[GetInstance().m_SwapChain->GetCurrentBackBufferIndex()]};
 		CurrentFrameContext.CommandAllocator->Reset();
 
-		D3D12_RESOURCE_BARRIER Barrier{D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
-		    D3D12_RESOURCE_BARRIER_FLAG_NONE,
-		    {{CurrentFrameContext.Resource, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET}}};
+		D3D12_RESOURCE_BARRIER Barrier{
+		    D3D12_RESOURCE_BARRIER_TYPE_TRANSITION, D3D12_RESOURCE_BARRIER_FLAG_NONE, {{CurrentFrameContext.Resource, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET}}};
 		GetInstance().m_CommandList->Reset(CurrentFrameContext.CommandAllocator, nullptr);
 		GetInstance().m_CommandList->ResourceBarrier(1, &Barrier);
 		GetInstance().m_CommandList->OMSetRenderTargets(1, &CurrentFrameContext.Descriptor, FALSE, nullptr);
@@ -979,7 +974,7 @@ namespace YimMenu
 		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GetInstance().m_CommandList.Get());
 
 		Barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		Barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_PRESENT;
+		Barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 		GetInstance().m_CommandList->ResourceBarrier(1, &Barrier);
 		GetInstance().m_CommandList->Close();
 
@@ -989,6 +984,6 @@ namespace YimMenu
 		UINT64 FenceValue = GetInstance().m_FenceLastSignaledValue + 1;
 		GetInstance().m_CommandQueue->Signal(GetInstance().m_Fence.Get(), FenceValue);
 		GetInstance().m_FenceLastSignaledValue = FenceValue;
-		CurrentFrameContext.FenceValue         = FenceValue;
+		CurrentFrameContext.FenceValue = FenceValue;
 	}
 }

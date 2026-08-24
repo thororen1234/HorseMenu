@@ -35,17 +35,17 @@ namespace YimMenu::Submenus
 	Settings::Settings() :
 	    Submenu::Submenu("Settings")
 	{
-		auto hotkeys           = std::make_shared<Category>("Hotkeys");
-		auto gui               = std::make_shared<Category>("GUI");
-		auto protections       = std::make_shared<Category>("Protection");
-		auto syncGroup         = std::make_shared<Group>("Sync");
+		auto hotkeys = std::make_shared<Category>("Hotkeys");
+		auto gui = std::make_shared<Category>("GUI");
+		auto protections = std::make_shared<Category>("Protection");
+		auto syncGroup = std::make_shared<Group>("Sync");
 		auto networkEventGroup = std::make_shared<Group>("Network Events");
-		auto scriptEventGroup  = std::make_shared<Group>("Script Events");
-		auto playerEsp         = std::make_shared<Group>("Player ESP", 10);
-		auto pedEsp            = std::make_shared<Group>("Ped ESP", 10);
-		auto overlay            = std::make_shared<Group>("Overlay");
-		auto context           = std::make_shared<Group>("Context Menu");
-		auto misc              = std::make_shared<Group>("Misc");
+		auto scriptEventGroup = std::make_shared<Group>("Script Events");
+		auto playerEsp = std::make_shared<Group>("Player ESP", 10);
+		auto pedEsp = std::make_shared<Group>("Ped ESP", 10);
+		auto overlay = std::make_shared<Group>("Overlay");
+		auto context = std::make_shared<Group>("Context Menu");
+		auto misc = std::make_shared<Group>("Misc");
 
 		hotkeys->AddItem(std::make_shared<ImGuiItem>(Hotkeys));
 
@@ -111,6 +111,7 @@ namespace YimMenu::Submenus
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockstableevents"_J));
 		scriptEventGroup->AddItem(std::make_shared<BoolCommandItem>("blockkickfrommissionlobby"_J));
 
+		gui->AddItem(std::make_shared<CommandItem>("unloadmenu"_J));
 		gui->AddItem(playerEsp);
 		gui->AddItem(pedEsp);
 		gui->AddItem(overlay);

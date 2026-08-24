@@ -49,7 +49,10 @@ namespace YimMenu
 	template<typename T>
 	inline DetourHook<T>::~DetourHook()
 	{
-		DisableNow();
+		if (m_OriginalFunc)
+		{
+			MH_RemoveHook(m_TargetFunc);
+		}
 	}
 
 	template<typename T>
@@ -64,6 +67,8 @@ namespace YimMenu
 
 			return false;
 		}
+
+		m_Enabled = true;
 		return true;
 	}
 
@@ -79,6 +84,8 @@ namespace YimMenu
 
 			return false;
 		}
+
+		m_Enabled = false;
 		return true;
 	}
 
@@ -94,6 +101,8 @@ namespace YimMenu
 
 			return false;
 		}
+
+		m_Enabled = true;
 		return true;
 	}
 
@@ -109,14 +118,14 @@ namespace YimMenu
 
 			return false;
 		}
+
+		m_Enabled = false;
 		return true;
 	}
 
 	template<typename T>
 	inline T DetourHook<T>::Original() const
-	{
-		return reinterpret_cast<T>(m_OriginalFunc);
-	}
+	{ return reinterpret_cast<T>(m_OriginalFunc); }
 
 	template<typename T>
 	inline void DetourHook<T>::OptimizeHook()

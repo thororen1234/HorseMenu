@@ -4,14 +4,14 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
-#include "game/backend/PlayerDatabase.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/MapEditor/MapEditor.hpp"
-#include "game/backend/ScriptMgr.hpp"
 #include "game/backend/NativeHooks.hpp"
+#include "game/backend/PlayerDatabase.hpp"
 #include "game/backend/SavedLocations.hpp"
+#include "game/backend/ScriptMgr.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
@@ -72,11 +72,11 @@ namespace YimMenu
 
 		LOG(INFO) << "Unloading";
 
-		NativeHooks::Destroy();
-		LOG(INFO) << "NativeHooks uninitialized";
-
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr uninitialized";
+
+		NativeHooks::Destroy();
+		LOG(INFO) << "NativeHooks uninitialized";
 
 		FiberPool::Destroy();
 		LOG(INFO) << "FiberPool uninitialized";
