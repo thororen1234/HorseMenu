@@ -3,6 +3,7 @@
 #include "StackTrace.hpp"
 
 #include <hde64.h>
+#include <sstream>
 #include <unordered_set>
 
 
@@ -29,6 +30,15 @@ namespace YimMenu
 		SetUnhandledExceptionFilter(reinterpret_cast<decltype(&VectoredExceptionHandler)>(m_Handler));
 	}
 
+	void ShowCrashPrompt(DWORD exception_code)
+	{
+		std::ostringstream message;
+		message << "HorseMenu has crashed (exception code " << HEX(exception_code)
+		        << ") and needs to close.\n\nA crash report has been written to the log.";
+
+		MessageBoxA(nullptr, message.str().c_str(), "HorseMenu - Fatal Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+	}
+
 	inline thread_local static StackTrace trace;
 	LONG VectoredExceptionHandler(EXCEPTION_POINTERS* exception_info)
 	{
@@ -48,12 +58,19 @@ namespace YimMenu
 			logged_exceptions.insert(trace_hash);
 		}
 
+		if (exception_code != EXCEPTION_ACCESS_VIOLATION && exception_code != EXCEPTION_IN_PAGE_ERROR)
+		{
+			ShowCrashPrompt(exception_code);
+			return EXCEPTION_CONTINUE_SEARCH;
+		}
+
 		if (exception_info->ExceptionRecord->ExceptionInformation[0] == EXCEPTION_EXECUTE_FAULT)
 		{
 			auto return_address_ptr = (uint64_t*)exception_info->ContextRecord->Rsp;
 			if (IsBadReadPtr(reinterpret_cast<void*>(return_address_ptr), 8))
 			{
 				LOG(FATAL) << "Cannot resume execution, crashing (failed to find valid return address)";
+				ShowCrashPrompt(exception_code);
 				return EXCEPTION_CONTINUE_SEARCH;
 			}
 			else
@@ -70,6 +87,7 @@ namespace YimMenu
 			if (opcode.flags & F_ERROR)
 			{
 				LOG(FATAL) << "Cannot resume execution, crashing (failed to decode insn)";
+				ShowCrashPrompt(exception_code);
 				return EXCEPTION_CONTINUE_SEARCH;
 			}
 
@@ -79,6 +97,7 @@ namespace YimMenu
 				if (IsBadReadPtr(reinterpret_cast<void*>(return_address_ptr), 8))
 				{
 					LOG(FATAL) << "Cannot resume execution, crashing";
+					ShowCrashPrompt(exception_code);
 					return EXCEPTION_CONTINUE_SEARCH;
 				}
 				else

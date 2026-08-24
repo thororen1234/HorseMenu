@@ -43,14 +43,28 @@ namespace YimMenu
 		std::ifstream fileStream(m_File);
 		if (fileStream.is_open())
 		{
-			json jsonData;
-			fileStream >> jsonData;
-			fileStream.close();
-
-			for (auto& [key, value] : jsonData.items())
+			try
 			{
-				auto player             = value.get<std::shared_ptr<persistent_player>>();
-				m_Data[std::stoll(key)] = player;
+				json jsonData;
+				fileStream >> jsonData;
+				fileStream.close();
+
+				for (auto& [key, value] : jsonData.items())
+				{
+					auto player             = value.get<std::shared_ptr<persistent_player>>();
+					m_Data[std::stoll(key)] = player;
+				}
+			}
+			catch (const std::exception& e)
+			{
+				fileStream.close();
+				LOG(WARNING) << "Player Database is corrupted (" << e.what() << "), backing up and resetting";
+
+				m_Data.clear();
+				std::filesystem::rename(m_File, m_File.string() + ".corrupt");
+
+				std::ofstream file(m_File, std::ios::out | std::ios::trunc);
+				file << "{}" << std::endl;
 			}
 		}
 	}
