@@ -24,6 +24,12 @@ namespace YimMenu
 
 	void Renderer::DestroyImpl()
 	{
+		if (!ImGui::GetCurrentContext())
+		{
+			LOG(WARNING) << "Renderer was never fully initialized, skipping backend teardown";
+			return;
+		}
+
 		ImGui_ImplWin32_Shutdown();
 
 		if (Pointers.IsVulkan)
